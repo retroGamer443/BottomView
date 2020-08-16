@@ -6,36 +6,35 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.kyrodevs.bottomviewexample.fragments.HomeFragment;
+import com.kyrodevs.bottomviewexample.fragments.SearchFragment;
+import com.kyrodevs.bottomviewexample.fragments.SettingFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+    private static final int homeFragment = 0;
+    private static final int searchFragment = 1;
+    private static final int settingsFragment = 2;
 
-    @SuppressLint("ResourceType")
+    private FragmentManager fragMan = getSupportFragmentManager();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
+        FragmentTransaction tran = fragMan.beginTransaction();
+        tran.add(R.id.fragment, new HomeFragment());
+        tran.commit();
 
-        final LinearLayout parent = new LinearLayout(this);
-        parent.setGravity(Gravity.BOTTOM);
-        parent.setId(1);
-        parent.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-        parent.setOrientation(LinearLayout.VERTICAL);
-        parent.setBackgroundColor(Color.LTGRAY);
-
-
-        BottomView bv = new BottomView(this);
+        BottomView bv = findViewById(R.id.bv);
         bv.setBgColor(Color.WHITE);
-        bv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                (int) Utility.dpToPixel(this, 50)));
-
         bv.addBitmapStates(new BitmapState(processBitmap(R.drawable.ic_home_unclick),
                 processBitmap(R.drawable.ic_home)));
         bv.addBitmapStates(new BitmapState(processBitmap(R.drawable.ic_search_uncheck),
@@ -45,10 +44,20 @@ public class MainActivity extends AppCompatActivity {
 
         bv.addBottomViewClickListener(new OnBottomViewClickListener() {
             @Override
-            public void onBottomItemClick(int pos) { }
+            public void onBottomItemClick(int pos) {
+                FragmentTransaction ft = fragMan.beginTransaction();
+                if (pos == homeFragment){
+                    ft.replace(R.id.fragment, new HomeFragment()).commit();
+                }
+                if (pos == searchFragment) {
+                    ft.replace(R.id.fragment, new SearchFragment()).commit();
+                }
+                if(pos == settingsFragment) {
+                    ft.replace(R.id.fragment, new SettingFragment()).commit();
+                }
+            }
         });
-        parent.addView(bv);
-        setContentView(parent);
+
     }
 
     public Bitmap processBitmap(int id) {

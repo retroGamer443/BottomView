@@ -46,7 +46,11 @@ public class BottomView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int width = processMeasureSpec(widthMeasureSpec);
         final int height = processMeasureSpec(heightMeasureSpec);
-        containerWidth = width / mIcons.size();
+        if (mIcons.size() == 0) {
+            containerWidth = width;
+        } else {
+            containerWidth = (int) width / mIcons.size();
+        }
         setMeasuredDimension(width, height);
     }
 
